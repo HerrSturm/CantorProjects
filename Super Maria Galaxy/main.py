@@ -24,17 +24,24 @@ points = 40
 timepoints=90
 
 
+
 #pygame.mixer.init()
 
-
-
+pygame.joystick.init()
+def initController():
+    try:
+        joystick = pygame.joystick.Joystick(0)
+        joystick.init()
+    except pygame.error:
+        joystick = None
+    return(joystick)
+joystick = initController()
 
 clock = pygame.time.Clock()
 
 
 # globale Variablen festlegen
 levels = []
-
 listenemys = []
 
 #Funktionen
@@ -42,10 +49,7 @@ listenemys = []
 def main():
     # Initialisiere Pygame
     pygame.init()
-    init()
-    
-    #Erstellung der Objekte:
-    
+    init()  
     draw_start_menu()
     gameloop(FPS)
 
@@ -117,21 +121,13 @@ def update_highscore(highscore,points):
     if points>highscore:
         highscore = points
         with open("highscore.txt", "w") as datei:
-            datei.write(str(highscore))
-           
+            datei.write(str(highscore))          
     return(highscore)
 
-
-
-    
-
-  
 #Startmenü
 def draw_start_menu():
     running = True
-    
     screen = pygame.display.set_mode(size)
-    
     while running:
 
         #Hintergrund
@@ -143,7 +139,7 @@ def draw_start_menu():
         
         #Text des Startbildschirms; Font, Farbe
         font = pygame.font.Font("Font/CHASER.ttf", 35)
-        text_surface = font.render(("Press s to start the game!"), True,((246, 218, 254))) 
+        text_surface = font.render(("Press START to start the game!"), True,((246, 218, 254))) 
         screen.blit(text_surface,(100 ,675))
         font = pygame.font.Font("Font/SuperMario256.ttf", 90)
         text_surface = font.render(("Super Maria"), True,((248, 155, 156)))
@@ -157,7 +153,7 @@ def draw_start_menu():
         pygame.display.flip()
         pygame.event.get()
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_s]:
+        if keys[pygame.K_s] or joystick.get_button(9):
             running = False
 
 
@@ -343,7 +339,7 @@ def gameloop(FPS):
     
     listenemys = [enemy1, enemy2, enemy3, enemy4, enemy5, enemy6, enemy7, enemy8, enemy9, enemy10]
 
-    player = Player([start[0],start[1],10,40])
+    player = Player([start[0],start[1],10,40],joystick)
     
 
     
@@ -360,12 +356,14 @@ def gameloop(FPS):
 
 
 
-
+    startKeyReleased = False
 
     while running:
+        if not(joystick.get_button(9)):
+            startKeyReleased = True
         #Spiel beenden
         keys = pygame.key.get_pressed() #gets the pressed keys
-        if keys[pygame.K_ESCAPE]:
+        if keys[pygame.K_ESCAPE] or (startKeyReleased and joystick.get_button(9)):
             running = False
             
         for event in pygame.event.get():
@@ -449,7 +447,7 @@ def gameloop(FPS):
             
             while running==False:
                 keys = pygame.key.get_pressed() #gets the pressed keys
-                if keys[pygame.K_ESCAPE]:
+                if keys[pygame.K_ESCAPE] or joystick.get_button(9):
                     pygame.quit()
             
                 for event in pygame.event.get():

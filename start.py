@@ -1,11 +1,12 @@
 import pygame
 import subprocess
 import sys
+import os
 
 pygame.init()
 
 # Fenstergröße
-size = width, height = 800, 600
+size = width, height = 1920, 1080
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Arcade Game Menu")
 
@@ -19,17 +20,19 @@ font = pygame.font.Font(None, 74)
 small_font = pygame.font.Font(None, 50)
 
 # Menüpunkte
-menu_items = ["Game 1", "Game 2", "Game 3", "Exit"]
-menu_actions = ["Super Maria Galaxy/main.py", "game2.py", "game3.py", "exit"]
+menu_items = ["Super Maria Galaxy", "Game 2", "Game 3", "Exit"]
+menu_actions = [("Super Maria Galaxy","main.py"), ("","game2.py"), ("","game3.py"), "exit"]
 selected_item = 0
 
 # Gamecontroller initialisieren
 pygame.joystick.init()
-try:
-    joystick = pygame.joystick.Joystick(0)
-    joystick.init()
-except pygame.error:
-    joystick = None
+def initController():
+    try:
+        joystick = pygame.joystick.Joystick(0)
+        joystick.init()
+    except pygame.error:
+        joystick = None
+    return(joystick)
 
 def draw_menu():
     screen.fill(black)
@@ -41,15 +44,33 @@ def draw_menu():
         screen.blit(label, (width//2 - label.get_width()//2, height//4 + index * 100))
     pygame.display.flip()
 
-def start_game(script_name):
-    subprocess.run(["python", script_name])
+def start_game(script_name,directory):
+    original_directory = os.getcwd()
+    try:
+        # Setze das Arbeitsverzeichnis auf den Ordner, in dem das Menü-Skript liegt
+        new_directory = f"{directory}/"   
+        os.chdir(new_directory)
+        # Führe das Skript aus
+        subprocess.run(["python", script_name])
+    finally:
+        # Kehre zum ursprünglichen Arbeitsverzeichnis zurück
+        os.chdir(original_directory)
+
 
 def main():
     global selected_item
     clock = pygame.time.Clock()
+    joystick = initController()
+
+    
+
 
     running = True
     while running:
+        #Controller nachträglich initialisieren
+        if not(joystick):
+            joystick = initController()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -62,29 +83,19 @@ def main():
                     if menu_actions[selected_item] == "exit":
                         running = False
                     else:
-                        start_game(menu_actions[selected_item])
+                        start_game(menu_actions[selected_item][1],menu_actions[selected_item][0])   
             elif event.type == pygame.JOYAXISMOTION:
                 if event.axis == 1 and event.value > 0.1:
                     selected_item = (selected_item + 1) % len(menu_items)
                 elif event.axis == 1 and event.value < -0.1:
                     selected_item = (selected_item - 1) % len(menu_items)
-            elif event.type == pygame.JOYBUTTONDOWN and event.button == 8:
+            elif event.type == pygame.JOYBUTTONDOWN and event.button == 9:
                     if menu_actions[selected_item] == "exit":
                         running = False
                     else:
-                        start_game(menu_actions[selected_item])                
+                        start_game(menu_actions[selected_item][1],menu_actions[selected_item][0])                
 
-        if joystick:
-            if joystick.get_button(1):  # Down
-                selected_item = (selected_item + 1) % len(menu_items)
-            elif joystick.get_button(0):  # Up
-                selected_item = (selected_item - 1) % len(menu_items)
-            elif joystick.get_button(9):  # Start button
-                if menu_actions[selected_item] == "exit":
-                    running = False
-                else:
-                    start_game(menu_actions[selected_item])
-
+        
         draw_menu()
         clock.tick(30)
 

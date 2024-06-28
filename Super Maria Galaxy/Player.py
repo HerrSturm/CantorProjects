@@ -17,23 +17,22 @@ jumpimgcounter = 0
 
 class Player(GameObject):
     
-    def __init__(self,hitbox):
+    def __init__(self,hitbox, joystick):
         super().__init__(hitbox)      
         self.direction = [3,0]
         self.layer = 3
         self.onGround = False
 
         self.jump = 0
-
-
         self.fall = 3
+        self.joystick = joystick
 
     def draw(self):
         keys = pygame.key.get_pressed()
         global tickcounter
         tickcounter +=1
-        
-        if keys[pygame.K_SPACE] or not(self.onGround):
+        js_axis_0 = self.joystick.get_axis(0)
+        if keys[pygame.K_SPACE] or self.joystick.get_button(3) or not(self.onGround):
             global jumpimgcounter
             self.screen.blit(jumpimg[jumpimgcounter],(self.hitbox.x-12,self.hitbox.y))
             if tickcounter >= 5:
@@ -43,8 +42,9 @@ class Player(GameObject):
                 else:
                     jumpimgcounter = 0
 
+        
 
-        elif keys[pygame.K_d]:
+        elif keys[pygame.K_d] or js_axis_0 > 0.1:
             global runimgcounter
             self.screen.blit(runimg[runimgcounter],(self.hitbox.x-12,self.hitbox.y))
             if tickcounter >= 5:
@@ -54,7 +54,7 @@ class Player(GameObject):
                 else:
                     runimgcounter = 0
                     
-        elif keys[pygame.K_a]:
+        elif keys[pygame.K_a] or js_axis_0 < -0.1:
             global runleftimgcounter
             self.screen.blit(runleftimg[runleftimgcounter],(self.hitbox.x-12,self.hitbox.y))
             if tickcounter >= 5:
@@ -73,19 +73,19 @@ class Player(GameObject):
     
     def move(self):
         keys = pygame.key.get_pressed() 
+        js_axis_0 = self.joystick.get_axis(0)
 
-
-        if keys[pygame.K_a]:
+        if keys[pygame.K_a] or js_axis_0 <-0.1:
             self.hitbox[0] -= self.direction[0]
             
-        if keys[pygame.K_d]:
+        if keys[pygame.K_d] or js_axis_0 > 0.1:
             self.hitbox[0] += self.direction[0]
             
 
         if keys[pygame.K_UP]:
             self.hitbox[1] -= self.direction[1]     
 
-        if self.onGround and (keys[pygame.K_SPACE] or keys[pygame.K_w]):
+        if self.onGround and (keys[pygame.K_SPACE] or keys[pygame.K_w] or self.joystick.get_button(3)):
             #self.hitbox[1] -= self.direction[1]
             #self.jump = 100
             self.fall = -10
