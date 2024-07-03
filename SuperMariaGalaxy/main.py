@@ -66,7 +66,7 @@ def endlevel(currentLevel,levels, player):
         ende=True
 
 
-        sound = pygame.mixer.Sound('victory.WAV') 
+        sound = pygame.mixer.Sound('victory.wav') 
         sound.play() # Victory sound bei Abschluss des levels
 
     return(ende)        
@@ -168,7 +168,7 @@ def gameloop(FPS):
 
 
     
-    backtrack = pygame.mixer.Sound('doommusic.MP3')
+    backtrack = pygame.mixer.Sound('doommusic.mp3')
     backtrack.play(-1)
     
     
@@ -378,7 +378,7 @@ def gameloop(FPS):
         #Respwan-Knopf
         keys = pygame.key.get_pressed() 
         if keys[pygame.K_RSHIFT] or player.hitbox.y > 1000:
-            sound = pygame.mixer.Sound('fall.MP3') 
+            sound = pygame.mixer.Sound('fall.mp3') 
             sound.play() #deathsound bei Abschluss des levels
             if respawncounter==0:
                 player.hitbox.x = start[0]
@@ -524,7 +524,7 @@ def gameloop(FPS):
         for i in listenemys[currentenemys]:
             if checkEnemyCollision(player, i, start):
                 respawn+=1
-                sound = pygame.mixer.Sound('hit.MP3') 
+                sound = pygame.mixer.Sound('hit.mp3') 
                 sound.play()
                 points -= 1
                 
