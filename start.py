@@ -32,9 +32,6 @@ blue = (0, 0, 255)
 font = pygame.font.Font(None, 74)
 small_font = pygame.font.Font(None, 50)
 
-# Menüpunkte
-#menu_items = ["Super Maria Galaxy", "Game 2", "Game 3", "Exit"]
-#menu_actions = [("Super Maria Galaxy","main.py"), ("","game2.py"), ("","game3.py"), "exit"]
 selected_item = 0
 
 # Gamecontroller initialisieren
@@ -64,7 +61,7 @@ def start_game(spiel):
         new_directory = f"{spiel['path']}/"   
         os.chdir(new_directory)
         # Führe das Skript aus
-        subprocess.run(["python", spiel['file']])
+        subprocess.run(["python3", spiel['file']])
     finally:
         # Kehre zum ursprünglichen Arbeitsverzeichnis zurück
         os.chdir(original_directory)
