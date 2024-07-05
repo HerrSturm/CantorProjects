@@ -4,11 +4,16 @@ import sys
 import os
 import csv
 
+#VErzeichnispfad korrekt setzen
+script_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
+os.chdir(script_dir)
+
 pygame.init()
 
-# Fenstergröße
-size = width, height = 1920, 1080
-screen = pygame.display.set_mode(size,pygame.NOFRAME)
+#Pygame im Vollbildmodus starten
+screen_info = pygame.display.Info()
+screen_width, screen_height = screen_info.current_w, screen_info.current_h
+screen = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN)
 pygame.display.set_caption("Arcade Game Menu")
 
 spiele = []
@@ -49,7 +54,7 @@ def draw_menu():
             label = font.render(f"{spiel['name']} (Spieler: {spiel['player']})", True, blue)
         else:
             label = font.render(f"{spiel['name']}  (Spieler: {spiel['player']})", True, white)
-        screen.blit(label, (width//2 - label.get_width()//2, height//4 + index * 100))
+        screen.blit(label, (screen_width//2 - label.get_width()//2, screen_height//4 + index * 100))
     pygame.display.flip()
 
 def start_game(spiel):
@@ -99,7 +104,7 @@ def main():
                     selected_item = (selected_item - 1) % len(spiele)
             elif event.type == pygame.JOYBUTTONDOWN and event.button == 9:
                 start_game(spiele[selected_item])                
-            elif joystick.get_button(4) and joystick.get_button(5):
+            elif joystick.get_button(4) and joystick.get_button(5) and joystick.get_button(8):
                 running = False
         
         draw_menu()
