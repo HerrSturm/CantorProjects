@@ -94,15 +94,16 @@ def main():
                 elif event.key == pygame.K_RETURN:
                     start_game(spiele[selected_item])
             #Joysticksteuerung 
-            elif event.type == pygame.JOYAXISMOTION:
-                if event.axis == 1 and event.value > 0.1:
-                    selected_item = (selected_item + 1) % len(spiele)
-                elif event.axis == 1 and event.value < -0.1:
-                    selected_item = (selected_item - 1) % len(spiele)
-            elif event.type == pygame.JOYBUTTONDOWN and event.button == 9:
-                start_game(spiele[selected_item])                
-            elif joystick.get_button(4) and joystick.get_button(5) and joystick.get_button(8):
-                running = False
+            elif joystick:
+                if event.type == pygame.JOYAXISMOTION:
+                    if event.axis == 1 and event.value > 0.1:
+                        selected_item = (selected_item + 1) % len(spiele)
+                    elif event.axis == 1 and event.value < -0.1:
+                        selected_item = (selected_item - 1) % len(spiele)
+                elif event.type == pygame.JOYBUTTONDOWN and event.button == 9:
+                    start_game(spiele[selected_item])                
+                elif joystick.get_button(4) and joystick.get_button(5) and joystick.get_button(8):
+                    running = False
         
         draw_menu()
         clock.tick(30)
