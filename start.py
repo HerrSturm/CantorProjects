@@ -93,6 +93,8 @@ def main():
                     selected_item = (selected_item - 1) % len(spiele)
                 elif event.key == pygame.K_RETURN:
                     start_game(spiele[selected_item])
+                elif event.key == pygame.K_ESCAPE:
+                    running = False
             #Joysticksteuerung 
             elif joystick:
                 if event.type == pygame.JOYAXISMOTION:
